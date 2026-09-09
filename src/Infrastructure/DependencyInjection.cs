@@ -23,14 +23,16 @@ public static class DependencyInjection
         builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-            options.UseSqlite(connectionString);
+            options.UseSqlServer(connectionString);
             options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         });
 
-
         builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-
         builder.Services.AddScoped<ApplicationDbContextInitialiser>();
+
+        builder.Services.AddScoped<IEmployeeRepository>(sp => new AttendanceMaSys.Infrastructure.Repositories.EmployeeRepository(connectionString));
+        builder.Services.AddScoped<IAttendanceRepository>(sp => new AttendanceMaSys.Infrastructure.Repositories.AttendanceRepository(connectionString));
+        builder.Services.AddTransient<ITokenService, AttendanceMaSys.Infrastructure.Services.TokenService>();
 
         builder.Services.AddAuthentication(options =>
             {
