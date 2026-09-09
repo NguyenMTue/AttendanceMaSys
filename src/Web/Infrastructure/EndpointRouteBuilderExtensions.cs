@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
-namespace MindVaultAI.Web.Infrastructure;
+namespace AttendanceMaSys.Web.Infrastructure;
 
 /// <summary>
 /// Extends <see cref="IEndpointRouteBuilder"/> with convenience overloads used inside

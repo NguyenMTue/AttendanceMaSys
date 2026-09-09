@@ -1,7 +1,7 @@
-﻿using MindVaultAI.Application.Common.Models;
+using AttendanceMaSys.Application.Common.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace MindVaultAI.Infrastructure.Identity;
+namespace AttendanceMaSys.Infrastructure.Identity;
 
 public static class IdentityResultExtensions
 {

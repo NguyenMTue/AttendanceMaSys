@@ -1,4 +1,4 @@
-using MindVaultAI.Infrastructure.Data;
+using AttendanceMaSys.Infrastructure.Data;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

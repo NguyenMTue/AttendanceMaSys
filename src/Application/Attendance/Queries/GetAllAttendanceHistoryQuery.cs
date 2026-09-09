@@ -1,7 +1,7 @@
-using MindVaultAI.Application.Attendance.DTOs;
-using MindVaultAI.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Attendance.DTOs;
+using AttendanceMaSys.Application.Common.Interfaces;
 
-namespace MindVaultAI.Application.Attendance.Queries;
+namespace AttendanceMaSys.Application.Attendance.Queries;
 
 public record GetAllAttendanceHistoryQuery(
     DateTime? StartDate = null,

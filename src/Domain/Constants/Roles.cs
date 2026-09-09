@@ -1,4 +1,4 @@
-namespace MindVaultAI.Domain.Constants;
+namespace AttendanceMaSys.Domain.Constants;
 
 public abstract class Roles
 {

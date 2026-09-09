@@ -1,12 +1,12 @@
-using MindVaultAI.Domain.Constants;
-using MindVaultAI.Domain.Entities;
-using MindVaultAI.Infrastructure.Identity;
+using AttendanceMaSys.Domain.Constants;
+using AttendanceMaSys.Domain.Entities;
+using AttendanceMaSys.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace MindVaultAI.Infrastructure.Data;
+namespace AttendanceMaSys.Infrastructure.Data;
 
 public static class InitialiserExtensions
 {

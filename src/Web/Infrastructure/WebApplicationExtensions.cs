@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace MindVaultAI.Web.Infrastructure;
+namespace AttendanceMaSys.Web.Infrastructure;
 
 public static class WebApplicationExtensions
 {

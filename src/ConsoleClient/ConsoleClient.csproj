@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MindVaultAI.ConsoleClient</RootNamespace>
-    <AssemblyName>MindVaultAI.ConsoleClient</AssemblyName>
+    <RootNamespace>AttendanceMaSys.ConsoleClient</RootNamespace>
+    <AssemblyName>AttendanceMaSys.ConsoleClient</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

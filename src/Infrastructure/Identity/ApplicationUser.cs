@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 
-namespace MindVaultAI.Infrastructure.Identity;
+namespace AttendanceMaSys.Infrastructure.Identity;
 
 public class ApplicationUser : IdentityUser
 {

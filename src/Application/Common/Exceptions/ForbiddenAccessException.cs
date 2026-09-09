@@ -1,4 +1,4 @@
-﻿namespace MindVaultAI.Application.Common.Exceptions;
+namespace AttendanceMaSys.Application.Common.Exceptions;
 
 public class ForbiddenAccessException : Exception
 {

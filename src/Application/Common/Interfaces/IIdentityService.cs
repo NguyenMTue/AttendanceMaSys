@@ -1,6 +1,6 @@
-using MindVaultAI.Application.Common.Models;
+using AttendanceMaSys.Application.Common.Models;
 
-namespace MindVaultAI.Application.Common.Interfaces;
+namespace AttendanceMaSys.Application.Common.Interfaces;
 
 public interface IIdentityService
 {

@@ -1,7 +1,7 @@
 using Azure.Identity;
-using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Infrastructure.Data;
-using MindVaultAI.Web.Services;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Infrastructure.Data;
+using AttendanceMaSys.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microsoft.Extensions.DependencyInjection;

@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>MindVaultAI.Application</RootNamespace>
-    <AssemblyName>MindVaultAI.Application</AssemblyName>
+    <RootNamespace>AttendanceMaSys.Application</RootNamespace>
+    <AssemblyName>AttendanceMaSys.Application</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

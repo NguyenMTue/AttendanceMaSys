@@ -1,7 +1,7 @@
-using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Application.Employees.DTOs;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Employees.DTOs;
 
-namespace MindVaultAI.Application.Employees.Commands;
+namespace AttendanceMaSys.Application.Employees.Commands;
 
 public record BatchImportEmployeesCommand(List<BatchImportEmployeeDto> Employees) : IRequest<BatchImportResultDto>;
 

@@ -1,4 +1,4 @@
-namespace MindVaultAI.Application.Attendance.DTOs;
+namespace AttendanceMaSys.Application.Attendance.DTOs;
 
 public class AttendanceRecordDto
 {

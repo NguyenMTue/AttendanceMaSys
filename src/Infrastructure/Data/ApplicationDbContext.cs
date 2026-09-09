@@ -1,11 +1,11 @@
 using System.Reflection;
-using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Domain.Entities;
-using MindVaultAI.Infrastructure.Identity;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Domain.Entities;
+using AttendanceMaSys.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MindVaultAI.Infrastructure.Data;
+namespace AttendanceMaSys.Infrastructure.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {

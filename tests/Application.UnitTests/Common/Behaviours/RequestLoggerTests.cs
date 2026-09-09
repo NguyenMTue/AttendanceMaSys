@@ -1,11 +1,11 @@
-using MindVaultAI.Application.Common.Behaviours;
-using MindVaultAI.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Common.Behaviours;
+using AttendanceMaSys.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
-namespace MindVaultAI.Application.UnitTests.Common.Behaviours;
+namespace AttendanceMaSys.Application.UnitTests.Common.Behaviours;
 
 public record TestRequestCommand : IRequest;
 

@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>MindVaultAI.Domain</RootNamespace>
-    <AssemblyName>MindVaultAI.Domain</AssemblyName>
+    <RootNamespace>AttendanceMaSys.Domain</RootNamespace>
+    <AssemblyName>AttendanceMaSys.Domain</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

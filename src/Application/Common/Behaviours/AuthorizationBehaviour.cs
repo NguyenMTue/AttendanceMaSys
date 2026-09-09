@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using MindVaultAI.Application.Common.Exceptions;
-using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Application.Common.Security;
+using System.Reflection;
+using AttendanceMaSys.Application.Common.Exceptions;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Common.Security;
 
-namespace MindVaultAI.Application.Common.Behaviours;
+namespace AttendanceMaSys.Application.Common.Behaviours;
 
 public class AuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
     where TRequest : notnull

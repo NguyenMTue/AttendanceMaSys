@@ -1,4 +1,4 @@
-namespace MindVaultAI.Domain.Entities;
+namespace AttendanceMaSys.Domain.Entities;
 
 public class Employee : BaseEntity<Guid>
 {

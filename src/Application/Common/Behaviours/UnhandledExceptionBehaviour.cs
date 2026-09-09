@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace MindVaultAI.Application.Common.Behaviours;
+namespace AttendanceMaSys.Application.Common.Behaviours;
 
 public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
@@ -22,7 +22,7 @@ public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavio
         {
             var requestName = typeof(TRequest).Name;
 
-            _logger.LogError(ex, "MindVaultAI Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
+            _logger.LogError(ex, "AttendanceMaSys Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
 
             throw;
         }

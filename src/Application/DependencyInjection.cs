@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using MindVaultAI.Application.Common.Behaviours;
+using System.Reflection;
+using AttendanceMaSys.Application.Common.Behaviours;
 using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-# MindVaultAI React Client
+# AttendanceMaSys React Client
 
 This project uses [Vite](https://vitejs.dev/) with React 19 and TypeScript.
 

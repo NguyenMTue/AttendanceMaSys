@@ -1,4 +1,4 @@
-namespace MindVaultAI.Domain.Enums;
+namespace AttendanceMaSys.Domain.Enums;
 
 public enum Department
 {
