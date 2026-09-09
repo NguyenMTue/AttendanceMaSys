@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Application.TodoLists.Queries.GetTodos;
+using MindVaultAI.Application.Common.Models;
 using MindVaultAI.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -34,8 +34,7 @@ public class MappingTests
     }
 
     [Test]
-    [TestCase(typeof(TodoList), typeof(TodoListDto))]
-    [TestCase(typeof(TodoItem), typeof(TodoItemDto))]
+    [TestCase(typeof(Employee), typeof(LookupDto))]
     public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
     {
         var instance = GetInstanceOf(source);

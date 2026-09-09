@@ -1,6 +1,5 @@
-﻿using MindVaultAI.Domain.Constants;
+using MindVaultAI.Domain.Constants;
 using MindVaultAI.Domain.Entities;
-using MindVaultAI.Domain.ValueObjects;
 using MindVaultAI.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -67,44 +66,36 @@ public class ApplicationDbContextInitialiser
 
     public async Task TrySeedAsync()
     {
-        // Default roles
-        var administratorRole = new IdentityRole(Roles.Administrator);
-
-        if (_roleManager.Roles.All(r => r.Name != administratorRole.Name))
+        // 1. Seed Roles
+        string[] roles = [Roles.Admin, Roles.GeneralManager, Roles.DepartmentManager, Roles.Employee];
+        foreach (var roleName in roles)
         {
-            await _roleManager.CreateAsync(administratorRole);
-        }
-
-        // Default users
-        var administrator = new ApplicationUser { UserName = "administrator@localhost", Email = "administrator@localhost" };
-
-        if (_userManager.Users.All(u => u.UserName != administrator.UserName))
-        {
-            await _userManager.CreateAsync(administrator, "Administrator1!");
-            if (!string.IsNullOrWhiteSpace(administratorRole.Name))
+            if (_roleManager.Roles.All(r => r.Name != roleName))
             {
-                await _userManager.AddToRolesAsync(administrator, new [] { administratorRole.Name });
+                await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
 
-        // Default data
-        // Seed, if necessary
-        if (!_context.TodoLists.Any())
+        // 2. Seed Test Accounts for each Role
+        var usersToSeed = new (string Email, string Password, string Role)[]
         {
-            _context.TodoLists.Add(new TodoList
-            {
-                Title = "Tasks",
-                Colour = Colour.Green,
-                Items =
-                {
-                    new TodoItem { Title = "Make a todo list 📃" },
-                    new TodoItem { Title = "Check off the first item ✅" },
-                    new TodoItem { Title = "Realise you've already done two things on the list! 🤯"},
-                    new TodoItem { Title = "Reward yourself with a nice, long nap 🏆" },
-                }
-            });
+            ("admin@company.com", "Admin123!", Roles.Admin),
+            ("gm@company.com", "Manager123!", Roles.GeneralManager),
+            ("deptmanager.it@company.com", "Manager123!", Roles.DepartmentManager),
+            ("employee.dev@company.com", "Employee123!", Roles.Employee)
+        };
 
-            await _context.SaveChangesAsync();
+        foreach (var (email, password, role) in usersToSeed)
+        {
+            if (_userManager.Users.All(u => u.UserName != email))
+            {
+                var user = new ApplicationUser { UserName = email, Email = email };
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, role);
+                }
+            }
         }
     }
 }
