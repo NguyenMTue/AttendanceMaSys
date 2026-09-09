@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using MindVaultAI.Application.Common.Interfaces;
 using MindVaultAI.Domain.Entities;
 using MindVaultAI.Infrastructure.Identity;
@@ -11,9 +11,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    public DbSet<TodoList> TodoLists => Set<TodoList>();
+    public DbSet<Employee> Employees => Set<Employee>();
 
-    public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+    public DbSet<AttendanceRecord> AttendanceRecords => Set<AttendanceRecord>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
