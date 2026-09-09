@@ -1,6 +1,6 @@
-﻿using MediatR;
+using MediatR;
 
-namespace MindVaultAI.Domain.Common;
+namespace AttendanceMaSys.Domain.Common;
 
 public abstract class BaseEvent : INotification
 {

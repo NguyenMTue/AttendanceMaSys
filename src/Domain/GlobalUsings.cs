@@ -1,3 +1,3 @@
-global using MindVaultAI.Domain.Common;
-global using MindVaultAI.Domain.Entities;
-global using MindVaultAI.Domain.Enums;
+global using AttendanceMaSys.Domain.Common;
+global using AttendanceMaSys.Domain.Entities;
+global using AttendanceMaSys.Domain.Enums;

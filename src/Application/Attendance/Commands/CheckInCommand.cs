@@ -1,7 +1,7 @@
-using MindVaultAI.Application.Attendance.DTOs;
-using MindVaultAI.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Attendance.DTOs;
+using AttendanceMaSys.Application.Common.Interfaces;
 
-namespace MindVaultAI.Application.Attendance.Commands;
+namespace AttendanceMaSys.Application.Attendance.Commands;
 
 public record CheckInCommand(Guid EmployeeId) : IRequest<AttendanceRecordDto>;
 

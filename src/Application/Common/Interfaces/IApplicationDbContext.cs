@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using MindVaultAI.Domain.Entities;
+using AttendanceMaSys.Domain.Entities;
 
-namespace MindVaultAI.Application.Common.Interfaces;
+namespace AttendanceMaSys.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {

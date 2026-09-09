@@ -1,12 +1,12 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
-using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Application.Common.Models;
-using MindVaultAI.Domain.Entities;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Common.Models;
+using AttendanceMaSys.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
-namespace MindVaultAI.Application.UnitTests.Common.Mappings;
+namespace AttendanceMaSys.Application.UnitTests.Common.Mappings;
 
 public class MappingTests
 {

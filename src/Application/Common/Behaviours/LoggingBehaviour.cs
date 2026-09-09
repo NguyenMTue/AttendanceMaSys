@@ -1,8 +1,8 @@
-﻿using MindVaultAI.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Common.Interfaces;
 using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 
-namespace MindVaultAI.Application.Common.Behaviours;
+namespace AttendanceMaSys.Application.Common.Behaviours;
 
 public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest>
     where TRequest : notnull
@@ -29,7 +29,7 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest>
             userName = await _identityService.GetUserNameAsync(userId);
         }
 
-        _logger.LogInformation("MindVaultAI Request: {Name} {@UserId} {@UserName} {@Request}",
+        _logger.LogInformation("AttendanceMaSys Request: {Name} {@UserId} {@UserName} {@Request}",
             requestName, userId, userName, request);
     }
 }

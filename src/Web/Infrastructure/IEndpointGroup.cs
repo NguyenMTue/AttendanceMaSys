@@ -1,4 +1,4 @@
-namespace MindVaultAI.Web.Infrastructure;
+namespace AttendanceMaSys.Web.Infrastructure;
 
 /// <summary>
 /// Defines a group of related Minimal API endpoints.

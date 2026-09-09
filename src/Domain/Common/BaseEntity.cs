@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MindVaultAI.Domain.Common;
+namespace AttendanceMaSys.Domain.Common;
 
 public abstract class BaseEntity<TKey>
 {

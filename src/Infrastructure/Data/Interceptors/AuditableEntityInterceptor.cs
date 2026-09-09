@@ -1,10 +1,10 @@
-﻿using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Domain.Common;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace MindVaultAI.Infrastructure.Data.Interceptors;
+namespace AttendanceMaSys.Infrastructure.Data.Interceptors;
 
 public class AuditableEntityInterceptor : SaveChangesInterceptor
 {

@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RootNamespace>MindVaultAI.Infrastructure</RootNamespace>
-    <AssemblyName>MindVaultAI.Infrastructure</AssemblyName>
+    <RootNamespace>AttendanceMaSys.Infrastructure</RootNamespace>
+    <AssemblyName>AttendanceMaSys.Infrastructure</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

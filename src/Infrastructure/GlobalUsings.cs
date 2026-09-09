@@ -1,2 +1,2 @@
-﻿global using Ardalis.GuardClauses;
-global using MindVaultAI.Shared;
+global using Ardalis.GuardClauses;
+global using AttendanceMaSys.Shared;

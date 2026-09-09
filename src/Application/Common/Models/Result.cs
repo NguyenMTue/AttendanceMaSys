@@ -1,4 +1,4 @@
-﻿namespace MindVaultAI.Application.Common.Models;
+namespace AttendanceMaSys.Application.Common.Models;
 
 public class Result
 {

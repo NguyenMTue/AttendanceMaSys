@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>MindVaultAI.Infrastructure.IntegrationTests</RootNamespace>
-        <AssemblyName>MindVaultAI.Infrastructure.IntegrationTests</AssemblyName>
+        <RootNamespace>AttendanceMaSys.Infrastructure.IntegrationTests</RootNamespace>
+        <AssemblyName>AttendanceMaSys.Infrastructure.IntegrationTests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

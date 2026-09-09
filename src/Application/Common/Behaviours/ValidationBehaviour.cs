@@ -1,6 +1,6 @@
-﻿using ValidationException = MindVaultAI.Application.Common.Exceptions.ValidationException;
+using ValidationException = AttendanceMaSys.Application.Common.Exceptions.ValidationException;
 
-namespace MindVaultAI.Application.Common.Behaviours;
+namespace AttendanceMaSys.Application.Common.Behaviours;
 
 public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull

@@ -1,9 +1,9 @@
-﻿using MindVaultAI.Infrastructure.Identity;
+using AttendanceMaSys.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MindVaultAI.Web.Endpoints;
+namespace AttendanceMaSys.Web.Endpoints;
 
 public class Users : IEndpointGroup
 {

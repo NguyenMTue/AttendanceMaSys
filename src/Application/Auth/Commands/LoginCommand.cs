@@ -1,7 +1,7 @@
-using MindVaultAI.Application.Auth.DTOs;
-using MindVaultAI.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Auth.DTOs;
+using AttendanceMaSys.Application.Common.Interfaces;
 
-namespace MindVaultAI.Application.Auth.Commands;
+namespace AttendanceMaSys.Application.Auth.Commands;
 
 public record LoginCommand(string Email, string Password) : IRequest<LoginResponseDto>;
 

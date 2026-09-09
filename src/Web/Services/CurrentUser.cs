@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
-using MindVaultAI.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Common.Interfaces;
 
-namespace MindVaultAI.Web.Services;
+namespace AttendanceMaSys.Web.Services;
 
 public class CurrentUser : IUser
 {

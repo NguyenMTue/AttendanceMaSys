@@ -1,8 +1,8 @@
-using MindVaultAI.Application.Common.Exceptions;
+using AttendanceMaSys.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MindVaultAI.Web.Infrastructure;
+namespace AttendanceMaSys.Web.Infrastructure;
 
 /// <summary>
 /// Converts well-known application exceptions into RFC 9110-compliant <see cref="ProblemDetails"/> responses,

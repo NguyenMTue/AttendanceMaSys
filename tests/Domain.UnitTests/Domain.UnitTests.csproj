@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>MindVaultAI.Domain.UnitTests</RootNamespace>
-        <AssemblyName>MindVaultAI.Domain.UnitTests</AssemblyName>
+        <RootNamespace>AttendanceMaSys.Domain.UnitTests</RootNamespace>
+        <AssemblyName>AttendanceMaSys.Domain.UnitTests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

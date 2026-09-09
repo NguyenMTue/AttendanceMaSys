@@ -1,7 +1,7 @@
-﻿using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Infrastructure.Data;
-using MindVaultAI.Infrastructure.Data.Interceptors;
-using MindVaultAI.Infrastructure.Identity;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Infrastructure.Data;
+using AttendanceMaSys.Infrastructure.Data.Interceptors;
+using AttendanceMaSys.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

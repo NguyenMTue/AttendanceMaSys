@@ -1,10 +1,10 @@
-using MindVaultAI.Application.Common.Interfaces;
-using MindVaultAI.Application.Common.Models;
+using AttendanceMaSys.Application.Common.Interfaces;
+using AttendanceMaSys.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace MindVaultAI.Infrastructure.Identity;
+namespace AttendanceMaSys.Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
@@ -40,6 +40,43 @@ public class IdentityService : IIdentityService
         var result = await _userManager.CreateAsync(user, password);
 
         return (result.ToApplicationResult(), user.Id);
+    }
+
+    public async Task<(Result Result, string UserId)> CreateUserWithRoleAsync(string userName, string password, string role)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = userName,
+            Email = userName,
+        };
+
+        var result = await _userManager.CreateAsync(user, password);
+        if (result.Succeeded && !string.IsNullOrEmpty(role))
+        {
+            await _userManager.AddToRoleAsync(user, role);
+        }
+
+        return (result.ToApplicationResult(), user.Id);
+    }
+
+    public async Task<(Result Result, string UserId, string Role)> ValidateUserCredentialsAsync(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email) ?? await _userManager.FindByNameAsync(email);
+        if (user == null)
+        {
+            return (Result.Failure(["Invalid credentials."]), string.Empty, string.Empty);
+        }
+
+        var validPassword = await _userManager.CheckPasswordAsync(user, password);
+        if (!validPassword)
+        {
+            return (Result.Failure(["Invalid credentials."]), string.Empty, string.Empty);
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault() ?? "Employee";
+
+        return (Result.Success(), user.Id, role);
     }
 
     public async Task<bool> IsInRoleAsync(string userId, string role)

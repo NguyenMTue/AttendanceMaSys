@@ -1,6 +1,6 @@
 using System;
 
-namespace MindVaultAI.ConsoleClient;
+namespace AttendanceMaSys.ConsoleClient;
 
 internal class Program
 {

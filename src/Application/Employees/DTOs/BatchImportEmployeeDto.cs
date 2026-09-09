@@ -1,4 +1,4 @@
-namespace MindVaultAI.Application.Employees.DTOs;
+namespace AttendanceMaSys.Application.Employees.DTOs;
 
 public class BatchImportEmployeeDto
 {

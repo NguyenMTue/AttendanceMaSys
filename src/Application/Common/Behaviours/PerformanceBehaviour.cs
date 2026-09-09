@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using MindVaultAI.Application.Common.Interfaces;
+using System.Diagnostics;
+using AttendanceMaSys.Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace MindVaultAI.Application.Common.Behaviours;
+namespace AttendanceMaSys.Application.Common.Behaviours;
 
 public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
@@ -45,7 +45,7 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
                 userName = await _identityService.GetUserNameAsync(userId);
             }
 
-            _logger.LogWarning("MindVaultAI Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}",
+            _logger.LogWarning("AttendanceMaSys Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}",
                 requestName, elapsedMilliseconds, userId, userName, request);
         }
 

@@ -1,4 +1,4 @@
-namespace MindVaultAI.Application.Auth.DTOs;
+namespace AttendanceMaSys.Application.Auth.DTOs;
 
 public class LoginRequestDto
 {

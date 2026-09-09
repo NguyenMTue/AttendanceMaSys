@@ -1,6 +1,6 @@
-﻿using FluentValidation.Results;
+using FluentValidation.Results;
 
-namespace MindVaultAI.Application.Common.Exceptions;
+namespace AttendanceMaSys.Application.Common.Exceptions;
 
 public class ValidationException : Exception
 {

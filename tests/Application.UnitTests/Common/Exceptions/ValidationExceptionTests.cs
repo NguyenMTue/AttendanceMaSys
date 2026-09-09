@@ -1,9 +1,9 @@
-﻿using MindVaultAI.Application.Common.Exceptions;
+using AttendanceMaSys.Application.Common.Exceptions;
 using FluentValidation.Results;
 using NUnit.Framework;
 using Shouldly;
 
-namespace MindVaultAI.Application.UnitTests.Common.Exceptions;
+namespace AttendanceMaSys.Application.UnitTests.Common.Exceptions;
 
 public class ValidationExceptionTests
 {

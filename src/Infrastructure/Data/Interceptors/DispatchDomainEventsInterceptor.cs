@@ -1,9 +1,9 @@
-﻿using MindVaultAI.Domain.Common;
+using AttendanceMaSys.Domain.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace MindVaultAI.Infrastructure.Data.Interceptors;
+namespace AttendanceMaSys.Infrastructure.Data.Interceptors;
 
 public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 {
