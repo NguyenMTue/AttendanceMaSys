@@ -1,12 +1,15 @@
+using System.Text;
 using AttendanceMaSys.Application.Common.Interfaces;
 using AttendanceMaSys.Infrastructure.Data;
 using AttendanceMaSys.Infrastructure.Data.Interceptors;
 using AttendanceMaSys.Infrastructure.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -34,10 +37,26 @@ public static class DependencyInjection
         builder.Services.AddScoped<IAttendanceRepository>(sp => new AttendanceMaSys.Infrastructure.Repositories.AttendanceRepository(connectionString));
         builder.Services.AddTransient<ITokenService, AttendanceMaSys.Infrastructure.Services.TokenService>();
 
+        var secretKey = "AttendanceMaSysSecretKeyForJwtAuthenticationTokensMustBeLongEnough!12345";
+        var key = Encoding.UTF8.GetBytes(secretKey);
+
         builder.Services.AddAuthentication(options =>
             {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
             })
             .AddIdentityCookies();
 
