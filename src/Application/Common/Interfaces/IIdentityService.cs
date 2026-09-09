@@ -1,4 +1,4 @@
-﻿using MindVaultAI.Application.Common.Models;
+using MindVaultAI.Application.Common.Models;
 
 namespace MindVaultAI.Application.Common.Interfaces;
 
@@ -11,6 +11,10 @@ public interface IIdentityService
     Task<bool> AuthorizeAsync(string userId, string policyName);
 
     Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password);
+
+    Task<(Result Result, string UserId)> CreateUserWithRoleAsync(string userName, string password, string role);
+
+    Task<(Result Result, string UserId, string Role)> ValidateUserCredentialsAsync(string email, string password);
 
     Task<Result> DeleteUserAsync(string userId);
 }

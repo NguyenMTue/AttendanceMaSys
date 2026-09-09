@@ -1,0 +1,58 @@
+using MindVaultAI.Application.Attendance.DTOs;
+using MindVaultAI.Application.Common.Interfaces;
+
+namespace MindVaultAI.Application.Attendance.Commands;
+
+public record CheckInCommand(Guid EmployeeId) : IRequest<AttendanceRecordDto>;
+
+public class CheckInCommandHandler : IRequestHandler<CheckInCommand, AttendanceRecordDto>
+{
+    private readonly IAttendanceRepository _attendanceRepository;
+    private readonly IEmployeeRepository _employeeRepository;
+
+    public CheckInCommandHandler(
+        IAttendanceRepository attendanceRepository,
+        IEmployeeRepository employeeRepository)
+    {
+        _attendanceRepository = attendanceRepository;
+        _employeeRepository = employeeRepository;
+    }
+
+    public async Task<AttendanceRecordDto> Handle(CheckInCommand request, CancellationToken cancellationToken)
+    {
+        var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId, cancellationToken);
+        if (employee == null)
+        {
+            throw new NotFoundException(nameof(Employee), request.EmployeeId.ToString());
+        }
+
+        var existingRecord = await _attendanceRepository.GetTodayRecordAsync(request.EmployeeId, cancellationToken);
+        if (existingRecord != null)
+        {
+            throw new InvalidOperationException("Bạn đã thực hiện check-in hôm nay rồi.");
+        }
+
+        var now = DateTime.Now;
+        var record = new AttendanceRecord
+        {
+            Id = Guid.NewGuid(),
+            EmployeeId = request.EmployeeId,
+            Date = now.Date,
+            ArrivalTime = now,
+            DepartureTime = null
+        };
+
+        await _attendanceRepository.AddAsync(record, cancellationToken);
+
+        return new AttendanceRecordDto
+        {
+            Id = record.Id,
+            EmployeeId = record.EmployeeId,
+            EmployeeName = $"{employee.FirstName} {employee.LastName}",
+            Department = employee.Department.ToString(),
+            Date = record.Date,
+            ArrivalTime = record.ArrivalTime,
+            DepartureTime = record.DepartureTime
+        };
+    }
+}
