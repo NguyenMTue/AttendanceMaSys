@@ -53,14 +53,14 @@
   ──────
   ## 🛠️ Công Nghệ Sử Dụng
 
-  • Framework: .NET 10.0 (ASP.NET Core Minimal APIs)
-  • Kiến trúc: Clean Architecture (Domain, Application, Infrastructure, Web)
-  • Pattern: CQRS (MediatR), Repository Pattern
-  • Database / ORM: SQL Server / LocalDB, Entity Framework Core 10 (Identity), ADO.NET (Microsoft.Data.SqlClient)
-  • Excel Processing: MiniExcel (Tối ưu hiệu năng và bộ nhớ)
-  • Validation: FluentValidation
-  • API Documentation: OpenAPI / Scalar API Reference
-  • Console Client: C# Interactive CLI Application
+  - Framework: .NET 10.0 (ASP.NET Core Minimal APIs)
+  - Kiến trúc: Clean Architecture (Domain, Application, Infrastructure, Web)
+  - Pattern: CQRS (MediatR), Repository Pattern
+  - Database / ORM: SQL Server / LocalDB, Entity Framework Core 10 (Identity), ADO.NET (Microsoft.Data.SqlClient)
+  - Excel Processing: MiniExcel (Tối ưu hiệu năng và bộ nhớ)
+  - Validation: FluentValidation
+  - API Documentation: OpenAPI / Scalar API Reference
+  - Console Client: C# Interactive CLI Application
   ──────
   ## 📁 Cấu Trúc Dự Án
 
@@ -98,8 +98,8 @@
 
   ### 1. Yêu Cầu Tiền Đề
 
-  • Cài đặt .NET 10 SDK (phiên bản 10.0.200 trở lên).
-  • Cài đặt Microsoft SQL Server hoặc LocalDB.
+  - Cài đặt .NET 10 SDK (phiên bản 10.0.200 trở lên).
+  - Cài đặt Microsoft SQL Server hoặc LocalDB.
 
   ### 2. Cấu Hình Cơ Sở Dữ Liệu
 
@@ -139,8 +139,8 @@
 
   Sau khi khởi chạy ứng dụng Web, bạn có thể truy cập giao diện tương tác API Swagger / Scalar UI tại địa chỉ:
 
-  • Scalar API Reference: https://localhost:5160/scalar/v1
-  • OpenAPI Json Document: https://localhost:5160/openapi/v1.json
+  - Scalar API Reference: https://localhost:5160/scalar/v1
+  - OpenAPI Json Document: https://localhost:5160/openapi/v1.json
   ──────
   ## 📄 Trích Lược Các Tài Khoản Mẫu (Seed Data)
 
