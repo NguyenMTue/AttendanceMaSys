@@ -72,5 +72,7 @@ public static class DependencyInjection
 
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddTransient<IIdentityService, IdentityService>();
+        builder.Services.AddSingleton<IImportJobStore, AttendanceMaSys.Infrastructure.Services.ImportJobStore>();
+        builder.Services.AddTransient<IExcelImportService, AttendanceMaSys.Infrastructure.Services.ExcelImportService>();
     }
 }

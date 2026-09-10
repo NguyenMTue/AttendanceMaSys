@@ -1,15 +1,27 @@
 using System;
+using System.Threading.Tasks;
+using AttendanceMaSys.ConsoleClient;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace AttendanceMaSys.ConsoleClient;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
-        Console.WriteLine("=============================================");
-        Console.WriteLine("  ATTENDANCE MANAGEMENT SYSTEM - CONSOLE CLIENT");
-        Console.WriteLine("=============================================");
-        Console.WriteLine("Initializing CLI application...");
+        System.Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        var builder = Host.CreateApplicationBuilder(args);
+
+        // Register Console App UI
+        builder.Services.AddTransient<ConsoleApp>();
+        builder.Services.AddTransient<ConsoleClient.Console>();
+
+        var host = builder.Build();
+
+        // Run Console Application (interacts with Server Web API over HTTP)
+        var consoleApp = host.Services.GetRequiredService<ConsoleApp>();
+        await consoleApp.RunAsync();
     }
 }
