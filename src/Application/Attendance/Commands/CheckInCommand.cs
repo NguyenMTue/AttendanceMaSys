@@ -26,6 +26,11 @@ public class CheckInCommandHandler : IRequestHandler<CheckInCommand, AttendanceR
             throw new NotFoundException(nameof(Employee), request.EmployeeId.ToString());
         }
 
+        if (!employee.IsActive)
+        {
+            throw new InvalidOperationException("Tài khoản nhân viên đã bị vô hiệu hóa / nhân viên đã nghỉ việc.");
+        }
+
         var existingRecord = await _attendanceRepository.GetTodayRecordAsync(request.EmployeeId, cancellationToken);
         if (existingRecord != null)
         {

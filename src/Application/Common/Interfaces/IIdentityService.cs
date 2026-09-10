@@ -18,5 +18,9 @@ public interface IIdentityService
 
     Task<bool> UserExistsAsync(string email);
 
+    Task<Result> UpdateUserRoleAsync(string emailOrPhone, string newRole);
+
+    Task<Result> DeactivateUserAsync(string emailOrPhone);
+
     Task<Result> DeleteUserAsync(string userId);
 }

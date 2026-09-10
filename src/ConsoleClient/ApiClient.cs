@@ -224,6 +224,41 @@ public class ApiClient
         return await response.Content.ReadAsByteArrayAsync();
     }
 
+    public async Task<EmployeeDto> UpdateEmployeePositionAsync(
+        Guid employeeId,
+        Department? department,
+        RoleEnum? role,
+        string? employeeType,
+        int? band,
+        string? technicalDirection,
+        bool? codingSkillsFlag,
+        RoleEnum? managerType)
+    {
+        var payload = new
+        {
+            Department = department,
+            Role = role,
+            EmployeeType = employeeType,
+            Band = band,
+            TechnicalDirection = technicalDirection,
+            CodingSkillsFlag = codingSkillsFlag,
+            ManagerType = managerType
+        };
+
+        var response = await _httpClient.PutAsJsonAsync($"/api/Employees/{employeeId}/position", payload, JsonOptions);
+        await EnsureSuccessAsync(response);
+
+        var result = await response.Content.ReadFromJsonAsync<EmployeeDto>(JsonOptions);
+        return result ?? throw new Exception("Không nhận được phản hồi cập nhật từ server.");
+    }
+
+    public async Task<bool> TerminateEmployeeAsync(Guid employeeId, string? reason)
+    {
+        var response = await _httpClient.PostAsJsonAsync($"/api/Employees/{employeeId}/terminate", new { Reason = reason }, JsonOptions);
+        await EnsureSuccessAsync(response);
+        return true;
+    }
+
     private static async Task EnsureSuccessAsync(HttpResponseMessage response)
     {
         if (!response.IsSuccessStatusCode)

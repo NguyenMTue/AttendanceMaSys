@@ -67,6 +67,11 @@ public class IdentityService : IIdentityService
             return (Result.Failure(["Invalid credentials."]), string.Empty, string.Empty);
         }
 
+        if (user.LockoutEnd.HasValue && user.LockoutEnd.Value > DateTimeOffset.UtcNow)
+        {
+            return (Result.Failure(["Tài khoản này đã bị khóa / vô hiệu hóa do nhân viên đã nghỉ việc."]), string.Empty, string.Empty);
+        }
+
         var validPassword = await _userManager.CheckPasswordAsync(user, password);
         if (!validPassword)
         {
@@ -83,6 +88,46 @@ public class IdentityService : IIdentityService
     {
         var user = await _userManager.FindByEmailAsync(email) ?? await _userManager.FindByNameAsync(email);
         return user != null;
+    }
+
+    public async Task<Result> UpdateUserRoleAsync(string emailOrPhone, string newRole)
+    {
+        var user = await FindUserByEmailOrPhoneAsync(emailOrPhone);
+        if (user == null) return Result.Failure(["Không tìm thấy tài khoản người dùng."]);
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        if (currentRoles.Count > 0)
+        {
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        }
+
+        var result = await _userManager.AddToRoleAsync(user, newRole);
+        return result.ToApplicationResult();
+    }
+
+    public async Task<Result> DeactivateUserAsync(string emailOrPhone)
+    {
+        var user = await FindUserByEmailOrPhoneAsync(emailOrPhone);
+        if (user == null) return Result.Failure(["Không tìm thấy tài khoản người dùng."]);
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        if (currentRoles.Count > 0)
+        {
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        }
+
+        user.LockoutEnd = DateTimeOffset.MaxValue;
+        user.LockoutEnabled = true;
+
+        var result = await _userManager.UpdateAsync(user);
+        return result.ToApplicationResult();
+    }
+
+    private async Task<ApplicationUser?> FindUserByEmailOrPhoneAsync(string emailOrPhone)
+    {
+        return await _userManager.FindByEmailAsync(emailOrPhone) ??
+               await _userManager.FindByNameAsync(emailOrPhone) ??
+               await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == emailOrPhone);
     }
 
     public async Task<bool> IsInRoleAsync(string userId, string role)

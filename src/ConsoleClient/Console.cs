@@ -132,11 +132,13 @@ public class ConsoleApp
         {
             System.Console.WriteLine(" 4. Xem lịch sử điểm danh phòng ban");
             System.Console.WriteLine(" 6. Quản lý / Xem danh sách nhân viên");
+            System.Console.WriteLine(" 8. Thay đổi vị trí / Thăng chức nhân viên");
         }
 
         if (isAdminOrGM)
         {
             System.Console.WriteLine(" 5. Xem lịch sử điểm danh toàn công ty");
+            System.Console.WriteLine(" 9. Cho nghỉ việc / Sa thải & Xóa quyền truy cập nhân viên");
         }
 
         if (isAdmin)
@@ -144,7 +146,7 @@ public class ConsoleApp
             System.Console.WriteLine(" 7. Import file Excel (.xlsx) - Chạy thử & Bất đồng bộ (Admin)");
         }
 
-        System.Console.WriteLine(" 8. Đăng xuất (Logout)");
+        System.Console.WriteLine(" 10. Đăng xuất (Logout)");
         System.Console.WriteLine(" 0. Thoát ứng dụng");
         System.Console.WriteLine();
         System.Console.Write("Vui lòng chọn chức năng: ");
@@ -178,6 +180,14 @@ public class ConsoleApp
                 else PrintError("Bạn không có quyền truy cập chức năng này.");
                 break;
             case "8":
+                if (isManagerOrAdmin) await HandleUpdatePositionAsync();
+                else PrintError("Bạn không có quyền truy cập chức năng này.");
+                break;
+            case "9":
+                if (isAdminOrGM) await HandleTerminateEmployeeAsync();
+                else PrintError("Bạn không có quyền truy cập chức năng này.");
+                break;
+            case "10":
                 CurrentUser = null;
                 _api.SetBearerToken(null);
                 PrintSuccess("Đã đăng xuất thành công.");
@@ -843,26 +853,151 @@ public class ConsoleApp
 
         System.Console.WriteLine();
         System.Console.ForegroundColor = ConsoleColor.Green;
-        System.Console.WriteLine(string.Format("{0,-36} | {1,-22} | {2,-12} | {3,-15} | {4,-10} | {5,-12} | {6,-8}",
-            "ID NHÂN VIÊN", "HỌ VÀ TÊN", "GIỚI TÍNH", "PHÒNG BAN", "VAI TRÒ", "LOẠI NV", "INTERN"));
-        System.Console.WriteLine(new string('-', 126));
+        System.Console.WriteLine(string.Format("{0,-36} | {1,-20} | {2,-10} | {3,-12} | {4,-18} | {5,-12} | {6,-12}",
+            "ID NHÂN VIÊN", "HỌ VÀ TÊN", "GIỚI TÍNH", "PHÒNG BAN", "VAI TRÒ", "LOẠI NV", "TRẠNG THÁI"));
+        System.Console.WriteLine(new string('-', 130));
         System.Console.ResetColor();
 
         foreach (var emp in employees)
         {
             var fullName = $"{emp.FirstName} {emp.LastName}";
-            System.Console.WriteLine(string.Format("{0,-36} | {1,-22} | {2,-12} | {3,-15} | {4,-10} | {5,-12} | {6,-8}",
+            var statusStr = emp.IsActive ? "Đang làm việc" : "Đã nghỉ việc";
+
+            if (emp.IsActive) System.Console.ForegroundColor = ConsoleColor.White;
+            else System.Console.ForegroundColor = ConsoleColor.DarkGray;
+
+            System.Console.WriteLine(string.Format("{0,-36} | {1,-20} | {2,-10} | {3,-12} | {4,-18} | {5,-12} | {6,-12}",
                 emp.Id,
-                Truncate(fullName, 22),
+                Truncate(fullName, 20),
                 emp.Gender,
                 emp.Department,
                 emp.Role,
                 emp.EmployeeType,
-                emp.IsIntern ? "Có" : "Không"));
+                statusStr));
         }
 
-        System.Console.WriteLine(new string('-', 126));
+        System.Console.ResetColor();
+        System.Console.WriteLine(new string('-', 130));
         PrintInfo($"Tổng cộng: {employees.Count} nhân viên.");
+    }
+
+    public async Task HandleUpdatePositionAsync()
+    {
+        PrintHeader("THAY ĐỔI VỊ TRÍ / PHÒNG BAN / THĂNG CHỨC NHÂN VIÊN");
+
+        var employees = await _api.GetEmployeesAsync(null);
+        RenderEmployeesTable(employees);
+
+        System.Console.Write("\nNhập ID nhân viên cần thay đổi vị trí / thăng chức (Guid): ");
+        var empIdStr = System.Console.ReadLine()?.Trim();
+        if (!Guid.TryParse(empIdStr, out var empId))
+        {
+            PrintError("ID nhân viên không hợp lệ.");
+            PressAnyKeyToContinue();
+            return;
+        }
+
+        var emp = employees.FirstOrDefault(e => e.Id == empId);
+        if (emp == null)
+        {
+            PrintError("Không tìm thấy nhân viên trong danh sách.");
+            PressAnyKeyToContinue();
+            return;
+        }
+
+        PrintInfo($"Đang cập nhật vị trí cho nhân viên: {emp.FirstName} {emp.LastName} (Hiện tại: Phòng {emp.Department}, Vai trò {emp.Role})");
+
+        var dept = SelectDepartment(emp.Department);
+
+        System.Console.WriteLine("Chọn vai trò / thăng chức mới (để trống nếu giữ nguyên):");
+        System.Console.WriteLine(" 1. Employee (Nhân viên)");
+        System.Console.WriteLine(" 2. DepartmentManager (Trưởng phòng)");
+        System.Console.WriteLine(" 3. GeneralManager (Giám đốc)");
+        System.Console.Write("Chọn (1-3, để trống nếu không đổi): ");
+        var roleOpt = System.Console.ReadLine()?.Trim();
+        RoleEnum? newRole = roleOpt switch
+        {
+            "1" => RoleEnum.Employee,
+            "2" => RoleEnum.DepartmentManager,
+            "3" => RoleEnum.GeneralManager,
+            _ => null
+        };
+
+        System.Console.Write("Nhập Cấp độ / Band mới (số từ 1-10, để trống nếu không đổi): ");
+        var bandStr = System.Console.ReadLine()?.Trim();
+        int? newBand = int.TryParse(bandStr, out var b) ? b : null;
+
+        System.Console.Write("Nhập Hướng kỹ thuật mới (dành cho Developer, để trống nếu không đổi): ");
+        var techDir = System.Console.ReadLine()?.Trim();
+        if (string.IsNullOrWhiteSpace(techDir)) techDir = null;
+
+        try
+        {
+            PrintInfo("Đang gửi yêu cầu cập nhật vị trí đến Server...");
+            var updated = await _api.UpdateEmployeePositionAsync(empId, dept, newRole, emp.EmployeeType, newBand, techDir, null, newRole);
+
+            PrintSuccess($"Cập nhật thành công! Nhân viên {updated.FirstName} {updated.LastName} hiện thuộc phòng: {updated.Department}, Vai trò: {updated.Role}.");
+        }
+        catch (Exception ex)
+        {
+            PrintError($"Cập nhật vị trí thất bại: {ex.Message}");
+        }
+
+        PressAnyKeyToContinue();
+    }
+
+    public async Task HandleTerminateEmployeeAsync()
+    {
+        PrintHeader("CHO NGHỈ VIỆC / SA THẢI & XÓA QUYỀN TRUY CẬP NHÂN VIÊN");
+
+        var employees = await _api.GetEmployeesAsync(null);
+        RenderEmployeesTable(employees);
+
+        System.Console.Write("\nNhập ID nhân viên cần cho nghỉ việc / sa thải (Guid): ");
+        var empIdStr = System.Console.ReadLine()?.Trim();
+        if (!Guid.TryParse(empIdStr, out var empId))
+        {
+            PrintError("ID nhân viên không hợp lệ.");
+            PressAnyKeyToContinue();
+            return;
+        }
+
+        var emp = employees.FirstOrDefault(e => e.Id == empId);
+        if (emp == null)
+        {
+            PrintError("Không tìm thấy nhân viên.");
+            PressAnyKeyToContinue();
+            return;
+        }
+
+        System.Console.Write($"Lý do sa thải / cho nghỉ việc đối với {emp.FirstName} {emp.LastName}: ");
+        var reason = System.Console.ReadLine()?.Trim();
+
+        System.Console.ForegroundColor = ConsoleColor.Red;
+        System.Console.Write($"\n[CẢNH BÁO] Bạn có CHẮC CHẮN muốn cho nhân viên '{emp.FirstName} {emp.LastName}' nghỉ việc và XÓA QUYỀN TRUY CẬP hệ thống không? (Y/N): ");
+        System.Console.ResetColor();
+
+        var confirm = System.Console.ReadLine()?.Trim();
+        if (confirm?.Equals("Y", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            try
+            {
+                PrintInfo("Đang gửi lệnh cho nghỉ việc & vô hiệu hóa tài khoản đến Server...");
+                await _api.TerminateEmployeeAsync(empId, reason);
+
+                PrintSuccess($"Đã xử lý cho nghỉ việc thành công! Quyền truy cập và tài khoản của {emp.FirstName} {emp.LastName} đã bị vô hiệu hóa hoàn toàn.");
+            }
+            catch (Exception ex)
+            {
+                PrintError($"Thao tác thất bại: {ex.Message}");
+            }
+        }
+        else
+        {
+            PrintWarning("Hủy thao tác cho nghỉ việc.");
+        }
+
+        PressAnyKeyToContinue();
     }
 
     private void DisplayDemoAccounts()

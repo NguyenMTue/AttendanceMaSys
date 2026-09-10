@@ -26,6 +26,11 @@ public class CheckOutCommandHandler : IRequestHandler<CheckOutCommand, Attendanc
             throw new NotFoundException(nameof(Employee), request.EmployeeId.ToString());
         }
 
+        if (!employee.IsActive)
+        {
+            throw new InvalidOperationException("Tài khoản nhân viên đã bị vô hiệu hóa / nhân viên đã nghỉ việc.");
+        }
+
         var todayRecord = await _attendanceRepository.GetTodayRecordAsync(request.EmployeeId, cancellationToken);
         if (todayRecord == null)
         {
