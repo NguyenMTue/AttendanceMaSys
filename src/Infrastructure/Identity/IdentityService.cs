@@ -79,6 +79,12 @@ public class IdentityService : IIdentityService
         return (Result.Success(), user.Id, role);
     }
 
+    public async Task<bool> UserExistsAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email) ?? await _userManager.FindByNameAsync(email);
+        return user != null;
+    }
+
     public async Task<bool> IsInRoleAsync(string userId, string role)
     {
         var user = await _userManager.FindByIdAsync(userId);

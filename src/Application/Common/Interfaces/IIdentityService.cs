@@ -16,5 +16,7 @@ public interface IIdentityService
 
     Task<(Result Result, string UserId, string Role)> ValidateUserCredentialsAsync(string email, string password);
 
+    Task<bool> UserExistsAsync(string email);
+
     Task<Result> DeleteUserAsync(string userId);
 }

@@ -141,7 +141,7 @@ public class ConsoleApp
 
         if (isAdmin)
         {
-            System.Console.WriteLine(" 7. Import nhân viên hàng loạt (Batch Import)");
+            System.Console.WriteLine(" 7. Import file Excel (.xlsx) - Chạy thử & Bất đồng bộ (Admin)");
         }
 
         System.Console.WriteLine(" 8. Đăng xuất (Logout)");
@@ -414,20 +414,231 @@ public class ConsoleApp
 
     public async Task HandleBatchImportAsync()
     {
-        PrintHeader("IMPORT NHÂN VIÊN HÀNG LOẠT (ADMIN VIA API)");
+        PrintHeader("IMPORT NHÂN VIÊN TỪ FILE EXCEL .XLSX (ADMIN)");
 
-        System.Console.WriteLine("Chức năng gửi request POST /api/Employees/batch-import.");
-        System.Console.WriteLine(" 1. Dùng mẫu dữ liệu test có sẵn (3 nhân viên mới)");
-        System.Console.WriteLine(" 2. Nhập thủ công 1 nhân viên");
-        System.Console.Write("Chọn phương thức (1-2): ");
+        System.Console.WriteLine(" Vui lòng chọn chế độ xử lý:");
+        System.Console.WriteLine(" 1. Import từ file Excel (.xlsx) - CHẾ ĐỘ CHẠY THỬ (Kiểm tra, xem trước thông tin rồi mới xác nhận lưu)");
+        System.Console.WriteLine(" 2. Import BẤT ĐỒNG BỘ từ file Excel (.xlsx) - Dành cho file KÍCH THƯỚC LỚN & Kiểm tra log lỗi");
+        System.Console.WriteLine(" 3. Tải / Tạo file Excel mẫu (.xlsx) tại máy local");
+        System.Console.WriteLine(" 4. Chạy thử nhanh với mẫu dữ liệu test (3 nhân viên)");
+        System.Console.WriteLine(" 0. Quay lại menu chính");
+        System.Console.WriteLine();
+        System.Console.Write("Vui lòng chọn (0-4): ");
 
         var choice = System.Console.ReadLine()?.Trim();
-        var importList = new List<BatchImportEmployeeDto>();
-
-        if (choice == "1")
+        switch (choice)
         {
-            var randomSuffix = Random.Shared.Next(100, 999);
-            importList.Add(new BatchImportEmployeeDto
+            case "1":
+                await HandleExcelDryRunImportAsync();
+                break;
+            case "2":
+                await HandleExcelAsyncImportAsync();
+                break;
+            case "3":
+                await HandleDownloadTemplateAsync();
+                break;
+            case "4":
+                await HandleDemoDryRunImportAsync();
+                break;
+            case "0":
+                return;
+            default:
+                PrintError("Lựa chọn không hợp lệ.");
+                PressAnyKeyToContinue();
+                break;
+        }
+    }
+
+    private async Task HandleExcelDryRunImportAsync()
+    {
+        PrintHeader("CHẾ ĐỘ CHẠY THỬ (PREVIEW / DRY-RUN) TỪ FILE EXCEL");
+
+        System.Console.Write("Nhập đường dẫn tập tin Excel (.xlsx) [Để trống để tự tạo file Excel test mẫu]: ");
+        var filePath = System.Console.ReadLine()?.Trim().Trim('"');
+
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp_test_import.xlsx");
+            PrintInfo($"Tự động tạo tập tin Excel test mẫu tại: {filePath}");
+            GenerateSampleExcelFile(filePath, count: 5);
+        }
+
+        if (!File.Exists(filePath))
+        {
+            PrintError($"Không tìm thấy tập tin tại đường dẫn: {filePath}");
+            PressAnyKeyToContinue();
+            return;
+        }
+
+        try
+        {
+            PrintInfo($"Đang gửi file Excel đến Server để CHẠY THỬ / KIỂM TRA (POST /api/Employees/import/preview)...");
+            var preview = await _api.PreviewImportFromExcelAsync(filePath);
+
+            RenderPreviewResultTable(preview);
+
+            if (preview.CanCommit && preview.ValidRowsCount > 0)
+            {
+                System.Console.WriteLine();
+                System.Console.ForegroundColor = ConsoleColor.Yellow;
+                System.Console.Write($" Bạn có muốn XÁC NHẬN LƯU {preview.ValidRowsCount} nhân viên hợp lệ vào hệ thống không? (Y/N): ");
+                System.Console.ResetColor();
+
+                var confirm = System.Console.ReadLine()?.Trim();
+                if (confirm?.Equals("Y", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    var validEmployees = preview.Items.Where(x => x.IsValid).Select(x => x.Employee).ToList();
+                    PrintInfo("Đang gửi lệnh XÁC NHẬN LƯU đến Server (POST /api/Employees/import/confirm)...");
+                    var result = await _api.ConfirmImportAsync(validEmployees);
+
+                    PrintSuccess($"Lưu dữ liệu hoàn tất! Số lượng thành công: {result.SuccessCount}, Thất bại: {result.FailedCount}");
+                    if (result.Errors.Count > 0)
+                    {
+                        PrintError("Chi tiết lỗi khi lưu:");
+                        foreach (var err in result.Errors)
+                        {
+                            System.Console.WriteLine($"   + {err}");
+                        }
+                    }
+                }
+                else
+                {
+                    PrintWarning("Đã hủy thao tác lưu dữ liệu.");
+                }
+            }
+            else
+            {
+                PrintError("File Excel không có dòng nào hợp lệ để lưu vào hệ thống.");
+            }
+        }
+        catch (Exception ex)
+        {
+            PrintError($"Chạy thử import thất bại: {ex.Message}");
+        }
+
+        PressAnyKeyToContinue();
+    }
+
+    private async Task HandleExcelAsyncImportAsync()
+    {
+        PrintHeader("IMPORT BẤT ĐỒNG BỘ CHO FILE LỚN & KIỂM TRA LOG LỖI");
+
+        System.Console.Write("Nhập đường dẫn tập tin Excel (.xlsx) [Để trống để tạo file Excel lớn 50 bản ghi mẫu]: ");
+        var filePath = System.Console.ReadLine()?.Trim().Trim('"');
+
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp_large_test_import.xlsx");
+            PrintInfo($"Tự động tạo file Excel 50 bản ghi test lớn (bao gồm cả dòng lỗi cố ý) tại: {filePath}");
+            GenerateSampleExcelFile(filePath, count: 50, includeErrors: true);
+        }
+
+        if (!File.Exists(filePath))
+        {
+            PrintError($"Không tìm thấy tập tin tại đường dẫn: {filePath}");
+            PressAnyKeyToContinue();
+            return;
+        }
+
+        try
+        {
+            PrintInfo("Đang khởi chạy tác vụ import BẤT ĐỒNG BỘ (POST /api/Employees/import/async)...");
+            var jobId = await _api.StartAsyncImportFromExcelAsync(filePath);
+
+            PrintSuccess($"Tác vụ bất đồng bộ đã khởi tạo thành công! Job ID: {jobId}");
+            PrintInfo("Đang theo dõi tiến độ xử lý bất đồng bộ từ Server theo thời gian thực...\n");
+
+            ImportJobStatusDto? jobStatus = null;
+            while (true)
+            {
+                jobStatus = await _api.GetImportJobStatusAsync(jobId);
+                if (jobStatus == null)
+                {
+                    PrintError("Không thể lấy trạng thái tiến trình.");
+                    break;
+                }
+
+                System.Console.Write($"\r [TIẾN ĐỘ BẤT ĐỒNG BỘ] Trạng thái: {jobStatus.Status,-10} | Đã xử lý: {jobStatus.ProcessedRows}/{jobStatus.TotalRows} ({jobStatus.ProgressPercentage}%) | Thành công: {jobStatus.SuccessCount} | Lỗi: {jobStatus.FailedCount}   ");
+
+                if (jobStatus.Status.Equals("Completed", StringComparison.OrdinalIgnoreCase) ||
+                    jobStatus.Status.Equals("Failed", StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+
+                await Task.Delay(500);
+            }
+
+            System.Console.WriteLine("\n");
+            PrintHeader("KẾT QUẢ XỬ LÝ BẤT ĐỒNG BỘ");
+            if (jobStatus != null)
+            {
+                System.Console.WriteLine($" - Job ID      : {jobStatus.JobId}");
+                System.Console.WriteLine($" - Trạng thái  : {jobStatus.Status}");
+                System.Console.WriteLine($" - Tổng số dòng: {jobStatus.TotalRows}");
+                System.Console.WriteLine($" - Thành công  : {jobStatus.SuccessCount}");
+                System.Console.WriteLine($" - Thất bại    : {jobStatus.FailedCount}");
+
+                if (jobStatus.Errors.Count > 0)
+                {
+                    System.Console.WriteLine();
+                    PrintError($"DANH SÁCH {jobStatus.Errors.Count} LỖI PHÁT HIỆN TRONG QUÁ TRÌNH XỬ LÝ BẤT ĐỒNG BỘ:");
+                    System.Console.ForegroundColor = ConsoleColor.Red;
+                    System.Console.WriteLine(string.Format("{0,-8} | {1,-30} | {2}", "DÒNG #", "EMAIL TÀI KHOẢN", "CHI TIẾT LỖI"));
+                    System.Console.WriteLine(new string('-', 100));
+                    System.Console.ResetColor();
+
+                    foreach (var err in jobStatus.Errors)
+                    {
+                        System.Console.WriteLine(string.Format("{0,-8} | {1,-30} | {2}", err.RowIndex, Truncate(err.Email, 30), err.ErrorMessage));
+                    }
+                    System.Console.WriteLine(new string('-', 100));
+                }
+                else
+                {
+                    PrintSuccess("Không có lỗi bất đồng bộ nào phát sinh!");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            PrintError($"Import bất đồng bộ thất bại: {ex.Message}");
+        }
+
+        PressAnyKeyToContinue();
+    }
+
+    private async Task HandleDownloadTemplateAsync()
+    {
+        PrintHeader("TẢI / ĐỊNH DẠNG FILE EXCEL MẪU (.XLSX)");
+
+        try
+        {
+            PrintInfo("Đang tải file Excel mẫu từ Server (GET /api/Employees/import/template)...");
+            var bytes = await _api.DownloadExcelTemplateAsync();
+
+            var targetPath = Path.Combine(Directory.GetCurrentDirectory(), "Employees_Import_Template.xlsx");
+            await File.WriteAllBytesAsync(targetPath, bytes);
+
+            PrintSuccess($"Đã tạo file Excel mẫu thành công tại đường dẫn:\n -> {targetPath}");
+            PrintInfo("Bạn có thể mở file trên bằng Microsoft Excel hoặc Excel Editor để điền dữ liệu.");
+        }
+        catch (Exception ex)
+        {
+            PrintError($"Lỗi khi tải mẫu Excel: {ex.Message}");
+        }
+
+        PressAnyKeyToContinue();
+    }
+
+    private async Task HandleDemoDryRunImportAsync()
+    {
+        PrintHeader("CHẠY THỬ & XEM TRƯỚC VỚI DỮ LIỆU DEMO (3 NHÂN VIÊN)");
+
+        var randomSuffix = Random.Shared.Next(100, 999);
+        var demoList = new List<BatchImportEmployeeDto>
+        {
+            new BatchImportEmployeeDto
             {
                 FirstName = "Hòa",
                 LastName = "Đặng Dev",
@@ -440,9 +651,8 @@ public class ConsoleApp
                 EmployeeType = "Developer",
                 Band = 2,
                 TechnicalDirection = "C# / ASP.NET Core"
-            });
-
-            importList.Add(new BatchImportEmployeeDto
+            },
+            new BatchImportEmployeeDto
             {
                 FirstName = "Yến",
                 LastName = "Trịnh QA",
@@ -455,9 +665,8 @@ public class ConsoleApp
                 EmployeeType = "QA",
                 Band = 3,
                 CodingSkillsFlag = true
-            });
-
-            importList.Add(new BatchImportEmployeeDto
+            },
+            new BatchImportEmployeeDto
             {
                 FirstName = "Phong",
                 LastName = "Lê Manager",
@@ -469,65 +678,122 @@ public class ConsoleApp
                 IsIntern = false,
                 EmployeeType = "Manager",
                 ManagerType = "DepartmentManager"
-            });
-        }
-        else if (choice == "2")
-        {
-            System.Console.Write("Họ: ");
-            var lastName = System.Console.ReadLine()?.Trim() ?? "Nguyễn";
-            System.Console.Write("Tên: ");
-            var firstName = System.Console.ReadLine()?.Trim() ?? "Văn A";
-            System.Console.Write("Email: ");
-            var email = System.Console.ReadLine()?.Trim() ?? $"user{Random.Shared.Next(100, 999)}@company.com";
-            System.Console.Write("Mật khẩu: ");
-            var pass = System.Console.ReadLine()?.Trim() ?? "Employee123!";
-            System.Console.Write("Loại nhân viên (Developer/QA/Manager/Employee): ");
-            var empType = System.Console.ReadLine()?.Trim() ?? "Employee";
-
-            importList.Add(new BatchImportEmployeeDto
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                Password = pass,
-                Gender = "Male",
-                Department = "IT",
-                PhoneNumber = "0909999999",
-                IsIntern = false,
-                EmployeeType = empType
-            });
-        }
-        else
-        {
-            PrintError("Lựa chọn hủy.");
-            PressAnyKeyToContinue();
-            return;
-        }
+            }
+        };
 
         try
         {
-            PrintInfo($"Đang gửi request POST {_api.BaseUrl}/api/Employees/batch-import ...");
-            var result = await _api.BatchImportAsync(importList);
+            PrintInfo("Đang gửi danh sách demo đến Server để CHẠY THỬ / PREVIEW...");
+            var preview = await _api.PreviewImportFromListAsync(demoList);
 
-            PrintSuccess($"Import hoàn tất!");
-            System.Console.WriteLine($" - Số lượng thành công: {result.SuccessCount}");
-            System.Console.WriteLine($" - Số lượng thất bại : {result.FailedCount}");
+            RenderPreviewResultTable(preview);
 
-            if (result.Errors.Count > 0)
+            if (preview.CanCommit)
             {
-                PrintError("Chi tiết lỗi từ Server:");
-                foreach (var err in result.Errors)
+                System.Console.Write("\nXác nhận LƯU danh sách hợp lệ này vào hệ thống? (Y/N): ");
+                var confirm = System.Console.ReadLine()?.Trim();
+                if (confirm?.Equals("Y", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    System.Console.WriteLine($"   + {err}");
+                    var validList = preview.Items.Where(x => x.IsValid).Select(x => x.Employee).ToList();
+                    var result = await _api.ConfirmImportAsync(validList);
+                    PrintSuccess($"Lưu thành công: {result.SuccessCount}, Thất bại: {result.FailedCount}");
                 }
             }
         }
         catch (Exception ex)
         {
-            PrintError($"Import thất bại: {ex.Message}");
+            PrintError($"Chạy thử thất bại: {ex.Message}");
         }
 
         PressAnyKeyToContinue();
+    }
+
+    private static void RenderPreviewResultTable(BatchImportPreviewDto preview)
+    {
+        System.Console.WriteLine();
+        System.Console.ForegroundColor = ConsoleColor.Cyan;
+        System.Console.WriteLine($"=== KẾT QUẢ CHẠY THỬ (PREVIEW) KHỔNG THAY ĐỔI CSDL ===");
+        System.Console.ResetColor();
+
+        System.Console.WriteLine($" - Tổng số bản ghi : {preview.TotalRows}");
+        System.Console.WriteLine($" - Bản ghi hợp lệ  : {preview.ValidRowsCount}");
+        System.Console.WriteLine($" - Bản ghi có lỗi  : {preview.InvalidRowsCount}");
+        System.Console.WriteLine();
+
+        System.Console.ForegroundColor = ConsoleColor.Green;
+        System.Console.WriteLine(string.Format("{0,-6} | {1,-20} | {2,-28} | {3,-10} | {4,-10} | {5,-12} | {6}",
+            "DÒNG #", "HỌ VÀ TÊN", "EMAIL TÀI KHOẢN", "PHÒNG BAN", "LOẠI NV", "TRẠNG THÁI", "LỖI PHÁT HIỆN"));
+        System.Console.WriteLine(new string('-', 120));
+        System.Console.ResetColor();
+
+        foreach (var item in preview.Items)
+        {
+            var fullName = $"{item.Employee.FirstName} {item.Employee.LastName}";
+            var statusStr = item.IsValid ? "HỢP LỆ" : "LỖI";
+
+            if (item.IsValid) System.Console.ForegroundColor = ConsoleColor.Green;
+            else System.Console.ForegroundColor = ConsoleColor.Red;
+
+            var errText = item.IsValid ? "Không có lỗi" : string.Join("; ", item.Errors);
+
+            System.Console.WriteLine(string.Format("{0,-6} | {1,-20} | {2,-28} | {3,-10} | {4,-10} | {5,-12} | {6}",
+                item.RowIndex,
+                Truncate(fullName, 20),
+                Truncate(item.Employee.Email, 28),
+                item.Employee.Department,
+                item.Employee.EmployeeType,
+                statusStr,
+                errText));
+        }
+
+        System.Console.ResetColor();
+        System.Console.WriteLine(new string('-', 120));
+    }
+
+    private static void GenerateSampleExcelFile(string filePath, int count = 5, bool includeErrors = false)
+    {
+        var list = new List<BatchImportEmployeeDto>();
+        var rand = Random.Shared;
+
+        for (int i = 1; i <= count; i++)
+        {
+            var isErrorRow = includeErrors && (i % 7 == 0 || i % 13 == 0);
+            var isDuplicateRow = includeErrors && (i == 10 || i == 20);
+
+            string email;
+            if (isDuplicateRow)
+            {
+                email = "admin@company.com"; // Duplicated in DB intentionally to test error check
+            }
+            else if (isErrorRow)
+            {
+                email = "email_invalid_format"; // Bad format email
+            }
+            else
+            {
+                email = $"test.user{rand.Next(1000, 9999)}_{i}@company.com";
+            }
+
+            list.Add(new BatchImportEmployeeDto
+            {
+                FirstName = $"Nhân Viên {i}",
+                LastName = "Nguyễn",
+                Email = email,
+                Password = isErrorRow ? "123" : "Employee123!",
+                Gender = i % 2 == 0 ? "Female" : "Male",
+                Department = i % 3 == 0 ? "HR" : "IT",
+                PhoneNumber = $"090{rand.Next(1000000, 9999999)}",
+                IsIntern = i % 5 == 0,
+                EmployeeType = i % 4 == 0 ? "QA" : (i % 3 == 0 ? "Manager" : "Developer"),
+                Band = 2,
+                TechnicalDirection = "C# / ASP.NET Core",
+                ManagerType = "DepartmentManager"
+            });
+        }
+
+        using var memoryStream = new MemoryStream();
+        MiniExcelLibs.MiniExcel.SaveAs(memoryStream, list);
+        File.WriteAllBytes(filePath, memoryStream.ToArray());
     }
 
     #endregion
