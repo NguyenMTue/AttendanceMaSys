@@ -144,13 +144,13 @@
   ──────
   ## 📄 Trích Lược Các Tài Khoản Mẫu (Seed Data)
 
-   Email                        │ Mật khẩu                     │ Phân quyền                   │ Vai trò
-  ──────────────────────────────┼──────────────────────────────┼──────────────────────────────┼─────────────────────────────
-   admin@company.com            │ Admin123!                    │ Admin                        │ Quản trị viên hệ thống
-   gm@company.com               │ Manager123!                  │ GeneralManager               │ Giám đốc điều hành
-   deptmanager.it@company.com   │ Manager123!                  │ DepartmentManager            │ Trưởng phòng IT
-   lead.dev@company.com         │ Employee123!                 │ Employee                     │ Tech Lead Developer
-   automation.qa@company.com    │ Employee123!                 │ Employee                     │ Senior Automation QA
+    | Email | Mật khẩu | Phân quyền | Vai trò |
+    |---|---|---|---|
+    | 'admin@company.com' | 'Admin123!' | Admin | Quản trị viên hệ thống |
+    | 'gm@company.com' | 'Manager123!' | GeneralManager | Giám đốc điều hành |
+    | 'deptmanager.it@company.com' | 'Manager123!' | DepartmentManager | Trưởng phòng IT |
+    | 'lead.dev@company.com' | 'Employee123!' | Employee | Tech Lead Developer |
+    | 'automation.qa@company.com' | 'Employee123!' | Employee | Senior Automation QA |    
   ──────
   ## 📝 License
 
