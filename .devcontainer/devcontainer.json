@@ -11,8 +11,8 @@
             "extensions": [
                 "GitHub.vscode-github-actions",
                 "ms-azuretools.vscode-docker"
-                // Include other VSCode language extensions if needed
-                // Right click on an extension inside VSCode to add directly to devcontainer.json, or copy the extension ID
+                
+                
             ]
         }
     },
