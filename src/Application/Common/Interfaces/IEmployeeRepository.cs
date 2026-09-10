@@ -8,4 +8,5 @@ public interface IEmployeeRepository
     Task<List<Employee>> GetByDepartmentAsync(Department department, CancellationToken ct = default);
     Task<Guid> AddAsync(Employee employee, CancellationToken ct = default);
     Task AddBatchAsync(IEnumerable<Employee> employees, CancellationToken ct = default);
+    Task UpdateAsync(Employee employee, CancellationToken ct = default);
 }

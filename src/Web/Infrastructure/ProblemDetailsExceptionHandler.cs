@@ -40,6 +40,20 @@ public class ProblemDetailsExceptionHandler : IExceptionHandler
                 Title = "Forbidden",
                 Type = "https://tools.ietf.org/html/rfc9110#section-15.5.4"
             }),
+            BadHttpRequestException bre => (StatusCodes.Status400BadRequest, new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Bad Request",
+                Detail = bre.Message,
+                Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
+            }),
+            InvalidOperationException ioe => (StatusCodes.Status400BadRequest, new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Bad Request",
+                Detail = ioe.Message,
+                Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1"
+            }),
             _ => (-1, null)
         };
 

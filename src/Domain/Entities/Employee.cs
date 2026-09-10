@@ -9,4 +9,5 @@ public class Employee : BaseEntity<Guid>
     public string PhoneNumber { get; set; } = string.Empty;
     public bool IsIntern { get; set; }
     public RoleEnum Role { get; set; }
+    public bool IsActive { get; set; } = true;
 }

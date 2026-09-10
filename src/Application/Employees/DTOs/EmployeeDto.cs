@@ -15,4 +15,5 @@ public class EmployeeDto
     public string? TechnicalDirection { get; set; }
     public bool? CodingSkillsFlag { get; set; }
     public string? ManagerType { get; set; }
+    public bool IsActive { get; set; } = true;
 }

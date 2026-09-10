@@ -5,6 +5,7 @@ using AttendanceMaSys.Domain.Enums;
 using AttendanceMaSys.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -53,6 +54,20 @@ public class ApplicationDbContextInitialiser
         try
         {
             await _context.Database.EnsureCreatedAsync();
+
+            if (_context.Database.IsSqlServer())
+            {
+                const string ensureIsActiveColumnSql = @"
+                    IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Employees')
+                    BEGIN
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Employees' AND COLUMN_NAME = 'IsActive')
+                        BEGIN
+                            ALTER TABLE Employees ADD IsActive BIT NOT NULL CONSTRAINT DF_Employees_IsActive DEFAULT 1;
+                        END
+                    END";
+
+                await _context.Database.ExecuteSqlRawAsync(ensureIsActiveColumnSql);
+            }
         }
         catch (Exception ex)
         {

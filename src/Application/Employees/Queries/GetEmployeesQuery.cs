@@ -42,7 +42,8 @@ public class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, List<
             PhoneNumber = emp.PhoneNumber,
             IsIntern = emp.IsIntern,
             Role = emp.Role.ToString(),
-            EmployeeType = emp.GetType().Name
+            EmployeeType = emp.GetType().Name,
+            IsActive = emp.IsActive
         };
 
         if (emp is Developer dev)

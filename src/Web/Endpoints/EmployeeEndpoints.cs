@@ -62,6 +62,16 @@ public class EmployeeEndpoints : IEndpointGroup
             .WithName("DownloadExcelTemplate")
             .WithSummary("Tải file Excel mẫu (.xlsx) để nhập dữ liệu")
             .RequireAuthorization();
+
+        groupBuilder.MapPut("/{id:guid}/position", UpdatePosition)
+            .WithName("UpdateEmployeePosition")
+            .WithSummary("Thay đổi vị trí, phòng ban, thăng chức cho nhân viên")
+            .RequireAuthorization();
+
+        groupBuilder.MapPost("/{id:guid}/terminate", TerminateEmployee)
+            .WithName("TerminateEmployee")
+            .WithSummary("Cho nghỉ việc / Sa thải và xóa quyền truy cập của nhân viên")
+            .RequireAuthorization();
     }
 
     public static async Task<IResult> GetEmployees(ISender sender, [FromQuery] Department? department)
@@ -154,4 +164,49 @@ public class EmployeeEndpoints : IEndpointGroup
         var fileBytes = await sender.Send(query);
         return TypedResults.File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Employees_Import_Template.xlsx");
     }
+
+    public static async Task<IResult> UpdatePosition(
+        ISender sender,
+        Guid id,
+        [FromBody] UpdateEmployeePositionRequest request)
+    {
+        var command = new UpdateEmployeePositionCommand(
+            id,
+            request.Department,
+            request.Role,
+            request.EmployeeType,
+            request.Band,
+            request.TechnicalDirection,
+            request.CodingSkillsFlag,
+            request.ManagerType);
+
+        var updatedDto = await sender.Send(command);
+        return TypedResults.Ok(updatedDto);
+    }
+
+    public static async Task<IResult> TerminateEmployee(
+        ISender sender,
+        Guid id,
+        [FromBody] TerminateEmployeeRequest? request)
+    {
+        var command = new TerminateEmployeeCommand(id, request?.Reason);
+        var success = await sender.Send(command);
+        return TypedResults.Ok(new { Success = success, Message = "Đã cho nhân viên nghỉ việc và vô hiệu hóa tài khoản / xóa quyền truy cập thành công." });
+    }
+}
+
+public class UpdateEmployeePositionRequest
+{
+    public Department? Department { get; set; }
+    public RoleEnum? Role { get; set; }
+    public string? EmployeeType { get; set; }
+    public int? Band { get; set; }
+    public string? TechnicalDirection { get; set; }
+    public bool? CodingSkillsFlag { get; set; }
+    public RoleEnum? ManagerType { get; set; }
+}
+
+public class TerminateEmployeeRequest
+{
+    public string? Reason { get; set; }
 }

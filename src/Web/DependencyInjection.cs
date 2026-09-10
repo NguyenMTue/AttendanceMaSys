@@ -22,6 +22,11 @@ public static class DependencyInjection
         builder.Services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);
 
+        builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+        {
+            options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        });
+
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddOpenApi(options =>
