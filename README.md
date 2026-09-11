@@ -1,8 +1,11 @@
 📋 AttendanceMaSys - Hệ Thống Quản Lý Chấm Công & Nhân Sự
 
   🖼 Image: .NET 10 → https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet
+  
   🖼 Image: Architecture → https://img.shields.io/badge/Architecture-Clean%20Architecture-brightgreen
+  
   🖼 Image: Database → https://img.shields.io/badge/Database-SQL%20Server-red?logo=microsoftsqlserver
+  
   🖼 Image: License → https://img.shields.io/badge/License-MIT-blue
 
   AttendanceMaSys là hệ thống quản lý nhân sự và chấm công tự động được xây dựng trên nền tảng .NET 10 theo kiến trúc Clean
